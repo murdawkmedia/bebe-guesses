@@ -1,1 +1,680 @@
+<!DOCTYPE html>
+<html lang="en-CA">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bebe Guesses - Baby Betting Pool</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'blush': '#F8E8E8',
+            'soft-pink': '#F5D0D0',
+            'dusty-rose': '#D4A5A5',
+            'warm-gray': '#8B7E7E',
+            'sage': '#A8C5A8',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button {
+      opacity: 1;
+      height: 32px;
+    }
+    .animate-fade-in {
+      animation: fadeIn 0.5s ease-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    details summary {
+      cursor: pointer;
+    }
+    details summary::-webkit-details-marker {
+      display: none;
+    }
+    details[open] summary .chevron {
+      transform: rotate(180deg);
+    }
+    .chevron {
+      transition: transform 0.2s ease;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-blush to-white">
+  
+  <div class="container mx-auto px-4 py-8 max-w-lg">
+    
+    <!-- Header -->
+    <header class="text-center mb-6">
+      <h1 class="text-4xl font-bold text-warm-gray mb-2">🍼 Bebe Guesses</h1>
+      <p class="text-dusty-rose text-lg">Place your bets on Baby's arrival!</p>
+    </header>
 
+    <!-- How It Works (Collapsible) -->
+    <details class="bg-white rounded-2xl shadow-lg mb-6 overflow-hidden">
+      <summary class="px-6 py-4 flex justify-between items-center text-warm-gray font-semibold hover:bg-blush transition">
+        <span>📖 How It Works</span>
+        <svg class="chevron w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+        </svg>
+      </summary>
+      <div class="px-6 pb-6 text-sm text-warm-gray space-y-4">
+        
+        <div>
+          <h3 class="font-semibold text-dusty-rose mb-1">🎯 Make Your Predictions</h3>
+          <p>Guess the baby's birth date/time, weight, length, hair, and eye colour. Suggest a name as a tie-breaker!</p>
+        </div>
+        
+        <div>
+          <h3 class="font-semibold text-dusty-rose mb-1">💰 Place Your Bet</h3>
+          <p>Minimum $1 CAD (or equivalent in USD, EUR, or Bitcoin). The more you bet, the more you could win!</p>
+        </div>
+        
+        <div>
+          <h3 class="font-semibold text-dusty-rose mb-1">🏆 How Winners Are Chosen</h3>
+          <p class="mb-2">The pot is split two ways:</p>
+          <ul class="list-disc list-inside space-y-1 ml-2">
+            <li><strong>50%</strong> goes to the <strong>Overall Winner</strong> (closest across all categories)</li>
+            <li><strong>50%</strong> is split among <strong>Category Winners</strong>:</li>
+          </ul>
+          <div class="mt-2 ml-4 grid grid-cols-2 gap-1 text-xs">
+            <span>📅 Date/Time: <strong>30%</strong></span>
+            <span>⚖️ Weight: <strong>25%</strong></span>
+            <span>📏 Length: <strong>20%</strong></span>
+            <span>👶 Hair: <strong>12.5%</strong></span>
+            <span>👁️ Eye Colour: <strong>12.5%</strong></span>
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="font-semibold text-dusty-rose mb-1">🎁 Winnings</h3>
+          <p>Winners receive their share proportional to their bet amount. Bet more = win more!</p>
+        </div>
+        
+        <div class="pt-3 border-t border-soft-pink">
+          <p class="text-xs text-dusty-rose">Accepts: CAD, USD, EUR, and Bitcoin (on-chain & Lightning) ⚡</p>
+        </div>
+      </div>
+    </details>
+
+    <!-- Baby Registry Link -->
+    <a 
+      href="#" 
+      id="registryLink"
+      class="block bg-sage/20 border border-sage rounded-xl px-6 py-3 mb-6 text-center hover:bg-sage/30 transition"
+    >
+      <span class="text-sage font-medium">🎁 View the Baby Registry →</span>
+    </a>
+
+    <!-- Form -->
+    <form id="guessForm" class="bg-white rounded-2xl shadow-lg p-6 space-y-6">
+      
+      <!-- Guesser Info -->
+      <div class="space-y-4">
+        <h2 class="text-xl font-semibold text-warm-gray border-b border-soft-pink pb-2">Your Info</h2>
+        
+        <div>
+          <label for="name" class="block text-sm font-medium text-warm-gray mb-1">Your Name *</label>
+          <input 
+            type="text" 
+            id="name" 
+            name="name" 
+            required
+            class="w-full px-4 py-3 rounded-lg border border-soft-pink focus:ring-2 focus:ring-dusty-rose focus:border-transparent outline-none transition"
+            placeholder="Enter your name"
+          >
+        </div>
+        
+        <div>
+          <label for="email" class="block text-sm font-medium text-warm-gray mb-1">Email *</label>
+          <input 
+            type="email" 
+            id="email" 
+            name="email" 
+            required
+            class="w-full px-4 py-3 rounded-lg border border-soft-pink focus:ring-2 focus:ring-dusty-rose focus:border-transparent outline-none transition"
+            placeholder="your@email.com"
+          >
+        </div>
+
+        <div>
+          <label for="phone" class="block text-sm font-medium text-warm-gray mb-1">Phone (Optional)</label>
+          <input 
+            type="tel" 
+            id="phone" 
+            name="phone"
+            class="w-full px-4 py-3 rounded-lg border border-soft-pink focus:ring-2 focus:ring-dusty-rose focus:border-transparent outline-none transition"
+            placeholder="For winner notifications"
+          >
+        </div>
+      </div>
+
+      <!-- Bet Amount -->
+      <div class="space-y-4">
+        <h2 class="text-xl font-semibold text-warm-gray border-b border-soft-pink pb-2">Your Bet 💰</h2>
+        
+        <div class="flex gap-3">
+          <div class="flex-1">
+            <label for="betAmount" class="block text-sm font-medium text-warm-gray mb-1">Amount *</label>
+            <div class="relative">
+              <span class="absolute left-4 top-1/2 -translate-y-1/2 text-warm-gray">$</span>
+              <input 
+                type="number" 
+                id="betAmount" 
+                name="betAmount" 
+                min="1" 
+                step="1"
+                required
+                class="w-full pl-8 pr-4 py-3 rounded-lg border border-soft-pink focus:ring-2 focus:ring-dusty-rose focus:border-transparent outline-none transition"
+                placeholder="5"
+              >
+            </div>
+          </div>
+          <div class="w-28">
+            <label for="currency" class="block text-sm font-medium text-warm-gray mb-1">Currency *</label>
+            <select 
+              id="currency" 
+              name="currency" 
+              required
+              class="w-full px-3 py-3 rounded-lg border border-soft-pink focus:ring-2 focus:ring-dusty-rose focus:border-transparent outline-none transition bg-white"
+            >
+              <option value="CAD" selected>CAD</option>
+              <option value="USD">USD</option>
+              <option value="EUR">EUR</option>
+              <option value="BTC (in Sats)">Sats ⚡</option>
+            </select>
+          </div>
+        </div>
+        <p class="text-xs text-dusty-rose">Minimum $1 CAD (or equivalent). Bet more to win more!</p>
+      </div>
+
+      <!-- Predictions -->
+      <div class="space-y-4">
+        <h2 class="text-xl font-semibold text-warm-gray border-b border-soft-pink pb-2">Your Predictions</h2>
+        
+        <!-- Due Date/Time -->
+        <div>
+          <label for="predictedDateTime" class="block text-sm font-medium text-warm-gray mb-1">Birth Date & Time * <span class="text-dusty-rose text-xs">(30% of category pot)</span></label>
+          <input 
+            type="datetime-local" 
+            id="predictedDateTime" 
+            name="predictedDateTime" 
+            required
+            class="w-full px-4 py-3 rounded-lg border border-soft-pink focus:ring-2 focus:ring-dusty-rose focus:border-transparent outline-none transition"
+          >
+        </div>
+        
+        <!-- Weight (Lbs & Oz) -->
+        <div>
+          <label class="block text-sm font-medium text-warm-gray mb-1">Birth Weight * <span class="text-dusty-rose text-xs">(25% of category pot)</span></label>
+          <div class="flex gap-3">
+            <div class="flex-1">
+              <div class="relative">
+                <input 
+                  type="number" 
+                  id="weightLbs" 
+                  name="weightLbs" 
+                  min="4" 
+                  max="12" 
+                  required
+                  class="w-full px-4 py-3 pr-12 rounded-lg border border-soft-pink focus:ring-2 focus:ring-dusty-rose focus:border-transparent outline-none transition"
+                  placeholder="7"
+                >
+                <span class="absolute right-4 top-1/2 -translate-y-1/2 text-warm-gray text-sm">lbs</span>
+              </div>
+            </div>
+            <div class="flex-1">
+              <div class="relative">
+                <input 
+                  type="number" 
+                  id="weightOz" 
+                  name="weightOz" 
+                  min="0" 
+                  max="15" 
+                  required
+                  class="w-full px-4 py-3 pr-10 rounded-lg border border-soft-pink focus:ring-2 focus:ring-dusty-rose focus:border-transparent outline-none transition"
+                  placeholder="8"
+                >
+                <span class="absolute right-4 top-1/2 -translate-y-1/2 text-warm-gray text-sm">oz</span>
+              </div>
+            </div>
+          </div>
+          <p class="text-xs text-dusty-rose mt-1">Typical range: 6-9 lbs</p>
+        </div>
+        
+        <!-- Length -->
+        <div>
+          <label for="lengthInches" class="block text-sm font-medium text-warm-gray mb-1">Length (inches) * <span class="text-dusty-rose text-xs">(20% of category pot)</span></label>
+          <div class="relative">
+            <input 
+              type="number" 
+              id="lengthInches" 
+              name="lengthInches" 
+              min="17" 
+              max="23" 
+              step="0.5" 
+              required
+              class="w-full px-4 py-3 pr-16 rounded-lg border border-soft-pink focus:ring-2 focus:ring-dusty-rose focus:border-transparent outline-none transition"
+              placeholder="20"
+            >
+            <span class="absolute right-4 top-1/2 -translate-y-1/2 text-warm-gray text-sm">inches</span>
+          </div>
+          <p class="text-xs text-dusty-rose mt-1">Typical range: 18-22 inches</p>
+        </div>
+        
+        <!-- Hair -->
+        <div>
+          <label class="block text-sm font-medium text-warm-gray mb-2">Hair * <span class="text-dusty-rose text-xs">(12.5% of category pot)</span></label>
+          <div class="grid grid-cols-3 gap-2">
+            <label class="cursor-pointer">
+              <input type="radio" name="hair" value="Bald" required class="sr-only peer">
+              <div class="px-4 py-3 text-center rounded-lg border border-soft-pink peer-checked:bg-dusty-rose peer-checked:text-white peer-checked:border-dusty-rose transition hover:bg-blush">
+                👶 Bald
+              </div>
+            </label>
+            <label class="cursor-pointer">
+              <input type="radio" name="hair" value="Peach Fuzz" class="sr-only peer">
+              <div class="px-4 py-3 text-center rounded-lg border border-soft-pink peer-checked:bg-dusty-rose peer-checked:text-white peer-checked:border-dusty-rose transition hover:bg-blush">
+                🥝 Peach Fuzz
+              </div>
+            </label>
+            <label class="cursor-pointer">
+              <input type="radio" name="hair" value="Full Head" class="sr-only peer">
+              <div class="px-4 py-3 text-center rounded-lg border border-soft-pink peer-checked:bg-dusty-rose peer-checked:text-white peer-checked:border-dusty-rose transition hover:bg-blush">
+                🦁 Full Head
+              </div>
+            </label>
+          </div>
+        </div>
+        
+        <!-- Eye Colour -->
+        <div>
+          <label class="block text-sm font-medium text-warm-gray mb-2">Eye Colour * <span class="text-dusty-rose text-xs">(12.5% of category pot)</span></label>
+          <div class="grid grid-cols-3 gap-2">
+            <label class="cursor-pointer">
+              <input type="radio" name="eyeColour" value="Blue" required class="sr-only peer">
+              <div class="px-3 py-3 text-center rounded-lg border border-soft-pink peer-checked:bg-dusty-rose peer-checked:text-white peer-checked:border-dusty-rose transition hover:bg-blush text-sm">
+                🔵 Blue
+              </div>
+            </label>
+            <label class="cursor-pointer">
+              <input type="radio" name="eyeColour" value="Brown" class="sr-only peer">
+              <div class="px-3 py-3 text-center rounded-lg border border-soft-pink peer-checked:bg-dusty-rose peer-checked:text-white peer-checked:border-dusty-rose transition hover:bg-blush text-sm">
+                🟤 Brown
+              </div>
+            </label>
+            <label class="cursor-pointer">
+              <input type="radio" name="eyeColour" value="Green" class="sr-only peer">
+              <div class="px-3 py-3 text-center rounded-lg border border-soft-pink peer-checked:bg-dusty-rose peer-checked:text-white peer-checked:border-dusty-rose transition hover:bg-blush text-sm">
+                🟢 Green
+              </div>
+            </label>
+            <label class="cursor-pointer">
+              <input type="radio" name="eyeColour" value="Hazel" class="sr-only peer">
+              <div class="px-3 py-3 text-center rounded-lg border border-soft-pink peer-checked:bg-dusty-rose peer-checked:text-white peer-checked:border-dusty-rose transition hover:bg-blush text-sm">
+                🟡 Hazel
+              </div>
+            </label>
+            <label class="cursor-pointer">
+              <input type="radio" name="eyeColour" value="Grey" class="sr-only peer">
+              <div class="px-3 py-3 text-center rounded-lg border border-soft-pink peer-checked:bg-dusty-rose peer-checked:text-white peer-checked:border-dusty-rose transition hover:bg-blush text-sm">
+                ⚪ Grey
+              </div>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tie-Breaker -->
+      <div class="space-y-4">
+        <h2 class="text-xl font-semibold text-warm-gray border-b border-soft-pink pb-2">Tie-Breaker</h2>
+        
+        <div>
+          <label for="nameSuggestion" class="block text-sm font-medium text-warm-gray mb-1">Suggest a Baby Name</label>
+          <input 
+            type="text" 
+            id="nameSuggestion" 
+            name="nameSuggestion"
+            class="w-full px-4 py-3 rounded-lg border border-soft-pink focus:ring-2 focus:ring-dusty-rose focus:border-transparent outline-none transition"
+            placeholder="What should they name the baby?"
+          >
+          <p class="text-xs text-dusty-rose mt-1">If you guess the exact name, you win automatically! 🎉</p>
+        </div>
+      </div>
+
+      <!-- Notes Section -->
+      <div class="space-y-4">
+        <h2 class="text-xl font-semibold text-warm-gray border-b border-soft-pink pb-2">Leave a Note 💌</h2>
+        
+        <div>
+          <label for="notes" class="block text-sm font-medium text-warm-gray mb-1">Personal Message (Optional)</label>
+          <textarea 
+            id="notes" 
+            name="notes"
+            rows="3"
+            maxlength="500"
+            class="w-full px-4 py-3 rounded-lg border border-soft-pink focus:ring-2 focus:ring-dusty-rose focus:border-transparent outline-none transition resize-none"
+            placeholder="Share your well-wishes, explain your prediction logic, or just say hi! 🎉"
+          ></textarea>
+          <p class="text-xs text-dusty-rose mt-1 text-right"><span id="charCount">0</span>/500 characters</p>
+        </div>
+      </div>
+
+      <!-- Submit Button -->
+      <button 
+        type="submit" 
+        id="submitBtn"
+        class="w-full py-4 px-6 bg-dusty-rose hover:bg-warm-gray text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition-all duration-200 text-lg"
+      >
+        Submit My Guess 🎯
+      </button>
+      
+    </form>
+
+    <!-- Success Message with Payment Link (hidden by default) -->
+    <div id="successMessage" class="hidden animate-fade-in">
+      
+      <!-- Confirmation Card -->
+      <div class="bg-green-50 border border-green-200 rounded-2xl p-6 text-center mb-4">
+        <div class="text-5xl mb-3">🎉</div>
+        <h3 class="text-xl font-bold text-green-800 mb-2">Guess Submitted!</h3>
+        <p class="text-green-700">Your prediction has been recorded, <span id="confirmedName" class="font-semibold"></span>!</p>
+      </div>
+
+      <!-- Payment Card -->
+      <div class="bg-white rounded-2xl shadow-lg p-6 text-center space-y-4">
+        <div class="text-4xl">💰</div>
+        <h3 class="text-xl font-bold text-warm-gray">One More Step!</h3>
+        <p class="text-dusty-rose">Complete your <span id="betAmountDisplay" class="font-semibold"></span> <span id="currencyDisplay"></span> entry fee to officially join the pool.</p>
+        
+        <!-- Zaprite Payment Button -->
+        <a 
+          id="paymentLink"
+          href="https://pay.zaprite.com/pl_bnfW1a7uKr"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="block w-full py-4 px-6 bg-amber-500 hover:bg-amber-600 text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition-all duration-200 text-lg"
+        >
+          Pay Entry Fee ⚡
+        </a>
+        
+        <p class="text-xs text-warm-gray">
+          Accepts Bitcoin (on-chain & Lightning) and card payments
+        </p>
+
+        <div class="bg-amber-50 border border-amber-200 rounded-lg p-3 text-sm text-amber-800">
+          <strong>Important:</strong> Please include your name ("<span id="paymentNameHint"></span>") in the payment note so we can match your payment!
+        </div>
+        
+        <div class="pt-4 border-t border-soft-pink">
+          <p class="text-sm text-dusty-rose">
+            Already paid? No worries! We'll match your payment to your guess.<br>
+            Questions? Contact the parents-to-be! 💕
+          </p>
+        </div>
+      </div>
+
+      <!-- Summary Card -->
+      <div class="bg-white rounded-2xl shadow-lg p-6 mt-4">
+        <h4 class="font-semibold text-warm-gray mb-3">📋 Your Guess Summary</h4>
+        <div id="guessSummary" class="text-sm text-dusty-rose space-y-1">
+          <!-- Filled dynamically -->
+        </div>
+      </div>
+
+      <!-- Registry Reminder -->
+      <a 
+        href="#" 
+        id="registryLinkPost"
+        class="block bg-sage/20 border border-sage rounded-xl px-6 py-4 mt-4 text-center hover:bg-sage/30 transition"
+      >
+        <span class="text-sage font-medium">🎁 Don't forget to check out the Baby Registry! →</span>
+      </a>
+
+    </div>
+
+    <!-- Error Message (hidden by default) -->
+    <div id="errorMessage" class="hidden bg-red-100 border border-red-400 text-red-700 rounded-2xl p-6 text-center mt-6 animate-fade-in">
+      <div class="text-4xl mb-2">😕</div>
+      <h3 class="text-xl font-bold mb-2">Oops!</h3>
+      <p id="errorText">Something went wrong. Please try again.</p>
+      <button 
+        onclick="location.reload()" 
+        class="mt-4 px-6 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition"
+      >
+        Try Again
+      </button>
+    </div>
+
+    <!-- FAQ Section -->
+    <details class="bg-white rounded-2xl shadow-lg mt-6 overflow-hidden">
+      <summary class="px-6 py-4 flex justify-between items-center text-warm-gray font-semibold hover:bg-blush transition">
+        <span>❓ Frequently Asked Questions</span>
+        <svg class="chevron w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+        </svg>
+      </summary>
+      <div class="px-6 pb-6 text-sm text-warm-gray space-y-4">
+        
+        <div>
+          <h3 class="font-semibold text-dusty-rose">When is the baby due?</h3>
+          <p>Check with the parents-to-be for the official due date! Most babies arrive within 2 weeks of their due date.</p>
+        </div>
+        
+        <div>
+          <h3 class="font-semibold text-dusty-rose">What if multiple people guess the exact same thing?</h3>
+          <p>In the rare case of a tie, the name suggestion is used as the tie-breaker. If someone guessed the actual name, they win!</p>
+        </div>
+        
+        <div>
+          <h3 class="font-semibold text-dusty-rose">How is "closest" calculated for date/time?</h3>
+          <p>We measure the absolute difference in minutes between your guess and the actual birth time. Closest wins!</p>
+        </div>
+        
+        <div>
+          <h3 class="font-semibold text-dusty-rose">What about eye colour? Don't all babies have blue eyes?</h3>
+          <p>Many babies are born with blue-ish eyes that change over time. We'll check eye colour at a few weeks old for the final result!</p>
+        </div>
+        
+        <div>
+          <h3 class="font-semibold text-dusty-rose">Can I change my guess after submitting?</h3>
+          <p>Contact the parents-to-be to request changes. Changes may not be accepted close to the due date.</p>
+        </div>
+        
+        <div>
+          <h3 class="font-semibold text-dusty-rose">How do I pay with Bitcoin?</h3>
+          <p>Click the payment button and select Bitcoin or Lightning. You can pay from any Bitcoin wallet! If paying in sats, enter your bet amount in satoshis (e.g., 10000 sats ≈ a few dollars).</p>
+        </div>
+        
+        <div>
+          <h3 class="font-semibold text-dusty-rose">When will winners be announced?</h3>
+          <p>Once the baby arrives and all the stats are confirmed, we'll calculate scores and announce winners!</p>
+        </div>
+        
+      </div>
+    </details>
+
+    <!-- Footer -->
+    <footer class="text-center mt-8 text-dusty-rose text-sm space-y-2">
+      <p>Made with 💕 for Baby's arrival</p>
+      <p class="text-xs text-warm-gray">Powered by Zaprite • Hosted on Cloudflare</p>
+    </footer>
+
+  </div>
+
+  <script>
+    // ============================================
+    // CONFIGURATION - UPDATE THESE VALUES
+    // ============================================
+    const WEBHOOK_URL = 'https://your-n8n-instance.com/webhook/bebe-guesses';
+    const ZAPRITE_PAYMENT_LINK = 'https://pay.zaprite.com/pl_bnfW1a7uKr';
+    const REGISTRY_LINK = '#'; // Update with actual registry URL when available
+    // ============================================
+
+    const form = document.getElementById('guessForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const successMessage = document.getElementById('successMessage');
+    const errorMessage = document.getElementById('errorMessage');
+    const errorText = document.getElementById('errorText');
+    const notesField = document.getElementById('notes');
+    const charCount = document.getElementById('charCount');
+
+    // Set registry links
+    document.getElementById('registryLink').href = REGISTRY_LINK;
+    document.getElementById('registryLinkPost').href = REGISTRY_LINK;
+
+    // Hide registry links if no URL set
+    if (REGISTRY_LINK === '#') {
+      document.getElementById('registryLink').style.display = 'none';
+      document.getElementById('registryLinkPost').style.display = 'none';
+    }
+
+    // Character counter for notes
+    notesField.addEventListener('input', () => {
+      charCount.textContent = notesField.value.length;
+    });
+
+    // Update the payment link
+    document.getElementById('paymentLink').href = ZAPRITE_PAYMENT_LINK;
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      // Disable button and show loading state
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span class="inline-block animate-pulse">Submitting... ⏳</span>';
+      
+      // Hide any previous messages
+      successMessage.classList.add('hidden');
+      errorMessage.classList.add('hidden');
+
+      // Gather form data
+      const formData = new FormData(form);
+      
+      // Calculate total weight in ounces
+      const weightLbs = parseInt(formData.get('weightLbs'), 10);
+      const weightOz = parseInt(formData.get('weightOz'), 10);
+      const totalWeightOz = (weightLbs * 16) + weightOz;
+      
+      // Build the payload (matching Airtable field names)
+      const payload = {
+        name: formData.get('name').trim(),
+        email: formData.get('email').trim().toLowerCase(),
+        phone: formData.get('phone')?.trim() || '',
+        betAmount: parseFloat(formData.get('betAmount')),
+        currency: formData.get('currency'),
+        predictedDateTime: formData.get('predictedDateTime'),
+        weightLbs: weightLbs,
+        weightOz: weightOz,
+        predictedWeightOz: totalWeightOz,
+        predictedLength: parseFloat(formData.get('lengthInches')),
+        predictedHair: formData.get('hair'),
+        predictedEyeColour: formData.get('eyeColour'),
+        nameSuggestion: formData.get('nameSuggestion')?.trim() || '',
+        notes: formData.get('notes')?.trim() || ''
+      };
+
+      // Validation
+      if (payload.weightOz < 0 || payload.weightOz > 15) {
+        showError('Ounces should be between 0 and 15');
+        resetButton();
+        return;
+      }
+
+      if (payload.betAmount < 1) {
+        showError('Minimum bet is $1');
+        resetButton();
+        return;
+      }
+
+      try {
+        const response = await fetch(WEBHOOK_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (response.ok) {
+          // Success! Show confirmation with payment link
+          form.classList.add('hidden');
+          
+          // Fill in the confirmation details
+          const firstName = payload.name.split(' ')[0];
+          document.getElementById('confirmedName').textContent = firstName;
+          document.getElementById('betAmountDisplay').textContent = payload.currency === 'BTC (in Sats)' ? payload.betAmount + ' sats' : '$' + payload.betAmount;
+          document.getElementById('currencyDisplay').textContent = payload.currency === 'BTC (in Sats)' ? '' : payload.currency;
+          document.getElementById('paymentNameHint').textContent = payload.name;
+          
+          // Build summary
+          const summaryDate = new Date(payload.predictedDateTime);
+          const formattedDate = summaryDate.toLocaleDateString('en-CA', { 
+            weekday: 'long', 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric',
+            hour: 'numeric',
+            minute: '2-digit'
+          });
+          
+          document.getElementById('guessSummary').innerHTML = `
+            <p><strong>💰 Bet:</strong> ${payload.currency === 'BTC (in Sats)' ? payload.betAmount + ' sats' : '$' + payload.betAmount + ' ' + payload.currency}</p>
+            <p><strong>📅 Date/Time:</strong> ${formattedDate}</p>
+            <p><strong>⚖️ Weight:</strong> ${weightLbs} lbs ${weightOz} oz</p>
+            <p><strong>📏 Length:</strong> ${payload.predictedLength} inches</p>
+            <p><strong>👶 Hair:</strong> ${payload.predictedHair}</p>
+            <p><strong>👁️ Eye Colour:</strong> ${payload.predictedEyeColour}</p>
+            ${payload.nameSuggestion ? `<p><strong>📛 Name:</strong> ${payload.nameSuggestion}</p>` : ''}
+            ${payload.notes ? `<p class="pt-2 mt-2 border-t border-soft-pink"><strong>💌 Note:</strong> "${payload.notes}"</p>` : ''}
+          `;
+          
+          successMessage.classList.remove('hidden');
+          
+          // Scroll to top of success message
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          
+        } else {
+          const errorData = await response.json().catch(() => ({}));
+          showError(errorData.message || 'Server returned an error. Please try again.');
+          resetButton();
+        }
+      } catch (error) {
+        console.error('Submission error:', error);
+        showError('Could not connect to the server. Please check your connection and try again.');
+        resetButton();
+      }
+    });
+
+    function showError(message) {
+      errorText.textContent = message;
+      errorMessage.classList.remove('hidden');
+      errorMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    function resetButton() {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Submit My Guess 🎯';
+    }
+
+    // Set default date to ~2 weeks from now
+    document.addEventListener('DOMContentLoaded', () => {
+      const dateInput = document.getElementById('predictedDateTime');
+      const twoWeeksFromNow = new Date();
+      twoWeeksFromNow.setDate(twoWeeksFromNow.getDate() + 14);
+      twoWeeksFromNow.setHours(12, 0, 0, 0);
+      
+      const formatted = twoWeeksFromNow.toISOString().slice(0, 16);
+      dateInput.value = formatted;
+    });
+  </script>
+
+</body>
+</html>
